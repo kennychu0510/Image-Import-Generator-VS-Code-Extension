@@ -2,6 +2,10 @@
   "name": "image-import-generator",
   "displayName": "Image Import Generator",
   "description": "Generates image import boilerplate code in one click",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kennychu0510/Image-Image-Generator-VS-Code-Extension"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.82.0"
