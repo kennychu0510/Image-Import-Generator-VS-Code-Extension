@@ -12,16 +12,16 @@ describe('get images in dir', () => {
   it('returns correct array', () => {
     expect(getImagesInDir(imagesPath1)).toMatchObject([
       {
-        name: 'icon-cancel@3x.png',
-        path: imagesPath1 + '/icon-cancel@3x.png',
-      },
-      {
         name: 'iOS_Loading.gif',
         path: imagesPath1 + '/iOS_Loading.gif',
       },
       {
         name: 'icon-cancel@2x.png',
         path: imagesPath1 + '/icon-cancel@2x.png',
+      },
+      {
+        name: 'icon-cancel@3x.png',
+        path: imagesPath1 + '/icon-cancel@3x.png',
       },
     ]);
   });

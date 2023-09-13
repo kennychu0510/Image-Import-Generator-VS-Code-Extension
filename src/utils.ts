@@ -8,7 +8,7 @@ export interface IImage {
 }
 
 export function getImagesInDir(dir: string) {
-  const images: IImage[] = [];
+  let images: IImage[] = [];
 
   function isImageFile(filename: string) {
     const extension = path.extname(filename).toLowerCase();
@@ -35,6 +35,15 @@ export function getImagesInDir(dir: string) {
   }
 
   scanDirectory(dir);
+  images = images.sort((a, b) => {
+    if (a.path < b.path) {
+      return -1;
+    }
+    if (a.path > b.path) {
+      return 1;
+    }
+    return 0;
+  });
   return images;
 }
 
