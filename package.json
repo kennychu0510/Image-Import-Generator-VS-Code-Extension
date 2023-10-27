@@ -7,7 +7,7 @@
     "url": "https://github.com/kennychu0510/Image-Image-Generator-VS-Code-Extension"
   },
   "icon": "images/icon.png",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.82.0"
   },
@@ -15,23 +15,41 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./dist/extension.js",
+  "main": "./dist/extension.js", 
   "contributes": {
     "commands": [
       {
-        "command": "image-import-generator.generateImport",
+        "command": "image-import-generator.generateImportOnce",
         "title": "Generate Import File"
+      },
+      {
+        "command": "image-import-generator.generateImportAutoTrack",
+        "title": "Track Folder"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "when": "explorerResourceIsFolder",
-          "command": "image-import-generator.generateImport",
-          "group": "2_workspace"
+          "submenu": "image-import-generator.submenu",
+          "group": "image-import-generator",
+          "when": "explorerResourceIsFolder"
+        }
+      ],
+      "image-import-generator.submenu": [
+        {
+          "command": "image-import-generator.generateImportOnce"
+        },
+        {
+          "command": "image-import-generator.generateImportAutoTrack"
         }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "image-import-generator.submenu",
+        "label": "Image Import Generator"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

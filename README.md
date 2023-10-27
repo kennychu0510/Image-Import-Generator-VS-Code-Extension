@@ -2,6 +2,6 @@
 
 ## Features
 
-Right click a directory in the explorer to quickly generate a index file that includes all images within the directory
+Track a folder and the image import will be updated automatically
 <br>
-<img src="./demo.gif"/>
+<img src="./demo_2.gif"/>
