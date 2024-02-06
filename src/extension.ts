@@ -11,20 +11,31 @@ export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
   const trackedFolders: Map<string, vscode.FileSystemWatcher> = new Map();
-  console.log('Image import generator is active');
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('image-import-generator.untrackAll', async (selectedDir: vscode.Uri | undefined) => {
+      trackedFolders.forEach((watcher) => {
+        watcher.dispose();
+      });
+      trackedFolders.clear();
+      vscode.window.showInformationMessage('Stopped tracking for all folders');
+    })
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('image-import-generator.generateImportOnce', async (selectedDir: vscode.Uri | undefined) => {
       if (!selectedDir) {
+        vscode.window.showErrorMessage('No directory selected');
         return;
       }
       try {
         createImportIndex(selectedDir.path);
         vscode.window.showInformationMessage('Updated import index successfully!');
       } catch (error) {
-        console.error(error);
-        if (error instanceof Error) {
-          vscode.window.showErrorMessage(error.message);
+        if (error instanceof Error && error.message === 'No images found in directory') {
+          vscode.window.showErrorMessage('No images found in directory');
+        } else {
+          vscode.window.showErrorMessage('Failed to update import index!');
         }
       }
     })

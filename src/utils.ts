@@ -26,10 +26,9 @@ export function getImagesInDir(dir: string) {
         scanDirectory(filePath);
       } else if (isImageFile(file)) {
         images.push({
-          name: file,
-          path: filePath,
+          name: parseNameWithSpace(file),
+          path: parsePathWithSpaces(filePath),
         });
-        // Or perform any desired action with the image file path
       }
     });
   }
@@ -58,7 +57,7 @@ export function generateFile(filePath: string, content: string) {
 
 export function parseImageImportsToString(images: IImage[], imageDir: string): string {
   return images.reduce((prev, cur) => {
-    return prev + `${parseKey(cur.name)}: require('${getRelativePath(imageDir, cur.path)}'),\n`;
+    return prev + `\t${parseKey(cur.name)}: require('${getRelativePath(imageDir, cur.path)}'),\n`;
   }, '');
 }
 
@@ -79,4 +78,12 @@ export function createImportIndex(imageDir: string) {
   }
   const content = parseImageImportsToString(images, imageDir);
   generateFile(imageDir, content);
+}
+
+function parsePathWithSpaces(path: string): string {
+  return path.replace(/ /g, '\\ ');
+}
+
+function parseNameWithSpace(name: string, replacement = '_'): string {
+  return name.replace(/ /g, replacement);
 }
