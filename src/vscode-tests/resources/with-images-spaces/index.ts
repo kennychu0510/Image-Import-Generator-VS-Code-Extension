@@ -1,5 +1,5 @@
 export default {
-	image A: require('./image A.png'),
-	image B: require('./image B.png'),
-	image C: require('./image C.gif'),
+	image_A: require('./image\ A.png'),
+	image_B: require('./image\ B.png'),
+	image_C: require('./image\ C.gif'),
 };
