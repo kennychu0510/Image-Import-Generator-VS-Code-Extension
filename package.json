@@ -20,15 +20,15 @@
     "commands": [
       {
         "command": "image-import-generator.generateImportOnce",
-        "title": "Image Import Generator: Generate Import File"
+        "title": "Generate Import File"
       },
       {
         "command": "image-import-generator.generateImportAutoTrack",
-        "title": "Image Import Generator: Track Folder"
+        "title": "Track Folder"
       },
       {
         "command": "image-import-generator.untrackAll",
-        "title": "Image Import Generator: Untrack All Folders"
+        "title": "Untrack All Folders"
       }
     ],
     "menus": {

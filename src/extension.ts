@@ -44,17 +44,22 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('image-import-generator.generateImportAutoTrack', async (selectedDir: vscode.Uri | undefined) => {
       if (!selectedDir) {
+        vscode.window.showErrorMessage('No directory selected');
         return;
       }
       try {
         const folderPath = selectedDir.path;
-
         if (trackedFolders.has(folderPath)) {
           trackedFolders.get(folderPath)?.dispose();
+          trackedFolders.delete(folderPath);
           vscode.window.showInformationMessage('Stopped tracking for folder');
           return;
         } else {
-          createImportIndex(folderPath);
+          try {
+            createImportIndex(folderPath);
+          } catch (error) {
+            
+          }
           vscode.window.showInformationMessage('Tracking folder to auto generate import index!');
 
           const watcher = vscode.workspace.createFileSystemWatcher(`${folderPath}/**/*`);

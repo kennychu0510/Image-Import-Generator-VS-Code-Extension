@@ -74,7 +74,7 @@ function getRelativePath(from: string, to: string) {
 export function createImportIndex(imageDir: string) {
   const images = getImagesInDir(imageDir);
   if (images.length === 0) {
-    throw new Error('No images found in directory');
+    generateFile(imageDir, '')
   }
   const content = parseImageImportsToString(images, imageDir);
   generateFile(imageDir, content);
