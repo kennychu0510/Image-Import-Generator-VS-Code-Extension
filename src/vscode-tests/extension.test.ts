@@ -136,17 +136,20 @@ suite('Image Import Generator', () => {
 
   test('Track folder - Scenario 2: Track same folder again to stop tracking', async () => {
     showErrorMessageSpy.resetHistory();
-    const folderPath = path.join(workspaceFolder, 'tracking');
-    const uri = vscode.Uri.file(folderPath);
-
-    const indexFilePath = path.join(folderPath, 'index.ts');
-    const imageFolderPath = path.join(workspaceFolder, 'images');
-
+    const folderPath = path.join(workspaceFolder, 'tracking2');
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath);
+    }
     // remove all files in folderPath
     const files = fs.readdirSync(folderPath);
     for (const file of files) {
       fs.unlinkSync(path.join(folderPath, file));
     }
+    const uri = vscode.Uri.file(folderPath);
+
+    const indexFilePath = path.join(folderPath, 'index.ts');
+    const imageFolderPath = path.join(workspaceFolder, 'images');
+
 
     vscode.commands.executeCommand('image-import-generator.generateImportAutoTrack', uri);
     await sleep();

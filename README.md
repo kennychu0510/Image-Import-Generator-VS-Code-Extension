@@ -4,4 +4,4 @@
 
 Track a folder and the image import will be updated automatically
 <br>
-<img src="./demo_2.gif"/>
+<img src="./demo.gif"/>

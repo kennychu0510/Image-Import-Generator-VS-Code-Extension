@@ -7,7 +7,7 @@
     "url": "https://github.com/kennychu0510/Image-Image-Generator-VS-Code-Extension"
   },
   "icon": "images/icon.png",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.82.0"
   },
@@ -24,7 +24,7 @@
       },
       {
         "command": "image-import-generator.generateImportAutoTrack",
-        "title": "Track Folder"
+        "title": "Track Folder for Generating Import File"
       },
       {
         "command": "image-import-generator.untrackAll",

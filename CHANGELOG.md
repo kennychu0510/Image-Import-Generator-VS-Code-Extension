@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.0] - 2024-02-06
+- Added integration tests
+- Added untrack all command
+
 ## [0.0.3] - 2023-10-27
 
 ### Changed
