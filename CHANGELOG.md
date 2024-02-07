@@ -1,8 +1,9 @@
 # Change Log
 
-## [1.0.0] - 2024-02-06
+## [1.0.0] - 2024-02-07
 - Added integration tests
 - Added untrack all command
+- Added settings for controlling generated image name
 
 ## [0.0.3] - 2023-10-27
 
