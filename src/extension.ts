@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { createImportIndex } from './utils';
+import { ExtensionConfig } from './model';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -29,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
       try {
-        createImportIndex(selectedDir.path);
+        createImportIndex(selectedDir.path, getExtensionConfig());
         vscode.window.showInformationMessage('Updated import index successfully!');
       } catch (error) {
         if (error instanceof Error && error.message === 'No images found in directory') {
@@ -56,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         } else {
           try {
-            createImportIndex(folderPath);
+            createImportIndex(folderPath, getExtensionConfig());
           } catch (error) {
             
           }
@@ -66,11 +67,11 @@ export function activate(context: vscode.ExtensionContext) {
 
           // Dispose the watcher when the extension is deactivated
           watcher.onDidCreate(() => {
-            createImportIndex(folderPath);
+            createImportIndex(folderPath, getExtensionConfig());
             vscode.window.showInformationMessage('Updated import index successfully!');
           });
           watcher.onDidDelete(() => {
-            createImportIndex(folderPath);
+            createImportIndex(folderPath, getExtensionConfig());
             vscode.window.showInformationMessage('Updated import index successfully!');
           });
           context.subscriptions.push(watcher);
@@ -88,3 +89,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+
+function getExtensionConfig(): ExtensionConfig {
+  const config = vscode.workspace.getConfiguration('image-import-generator');
+  return {
+    prefix: config.get('fileNamePrefix') || '',
+    suffix: config.get('fileNameSuffix') || '',
+    spaceReplacement: config.get('spaceReplacement') || '',
+    atReplacement: config.get('atReplacement') || '',
+    hyphenReplacement: config.get('hyphenReplacement') || '',
+  }
+}

@@ -43,10 +43,6 @@ suite('Image Import Generator', () => {
       fs.unlinkSync(indexFilePath);
     }
 
-    const imageFolder = fs.readdirSync(folderPath);
-
-    assert.equal(imageFolder.length, 3);
-
     vscode.commands.executeCommand('image-import-generator.generateImportOnce', uri);
     await sleep();
     assert.ok(showErrorMessageSpy.notCalled);
@@ -96,8 +92,6 @@ suite('Image Import Generator', () => {
     }
 
     const imageFolderPath = path.join(workspaceFolder, 'images');
-
-    assert.equal(fs.readdirSync(imageFolderPath).length, 3);
 
     vscode.commands.executeCommand('image-import-generator.generateImportAutoTrack', uri);
     await sleep();
@@ -251,6 +245,72 @@ suite('Image Import Generator', () => {
     assert.equal(fs.readFileSync(indexAPath, 'utf-8'), await getValidationFile('tracking-imageAC'));
     assert.equal(fs.readFileSync(indexBPath, 'utf-8'), await getValidationFile('tracking-imageBC'));
   });
+
+  test('Custom Settings - Scenario 1: Can read settings properly', async () => {
+    await resetExtensionSettings();
+    
+    const config = vscode.workspace.getConfiguration('image-import-generator');
+    assert.equal(config.get('fileNamePrefix'), '');
+    assert.equal(config.get('fileNameSuffix'), '');
+    assert.equal(config.get('spaceReplacement'), '_');
+    assert.equal(config.get('hyphenReplacement'), '_');
+    assert.equal(config.get('atReplacement'), '');
+  });
+
+  test('Custom Settings - Scenario 2: Use custom settings correctly', async () => {
+    try {
+      
+      await resetExtensionSettings();
+  
+      const config = vscode.workspace.getConfiguration('image-import-generator');
+      config.update('fileNamePrefix', 'prefix_', vscode.ConfigurationTarget.Workspace);
+      config.update('fileNameSuffix', '_suffix', vscode.ConfigurationTarget.Workspace);
+      config.update('spaceReplacement', '_space_', vscode.ConfigurationTarget.Workspace);
+      config.update('hyphenReplacement', '_hyphen_', vscode.ConfigurationTarget.Workspace);
+      config.update('atReplacement', '_at_', vscode.ConfigurationTarget.Workspace);
+      
+      await sleep();
+      assert.equal(vscode.workspace.getConfiguration('image-import-generator').get('fileNamePrefix'), 'prefix_');
+      assert.equal(vscode.workspace.getConfiguration('image-import-generator').get('fileNameSuffix'), '_suffix');
+      assert.equal(vscode.workspace.getConfiguration('image-import-generator').get('spaceReplacement'), '_space_');
+      assert.equal(vscode.workspace.getConfiguration('image-import-generator').get('hyphenReplacement'), '_hyphen_');
+      assert.equal(vscode.workspace.getConfiguration('image-import-generator').get('atReplacement'), '_at_');
+  
+      const folderPath = path.join(workspaceFolder, 'custom-settings');
+      const uri = vscode.Uri.file(folderPath);
+  
+      if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath);
+      }
+  
+      // delete index.ts inside folderPath if exists
+      const indexFilePath = path.join(folderPath, 'index.ts');
+      if (fs.existsSync(indexFilePath)) {
+        fs.unlinkSync(indexFilePath);
+      }
+  
+      const workingFolderContents = fs.readdirSync(folderPath);
+      workingFolderContents.forEach(file => {
+        fs.unlinkSync(path.join(folderPath, file));
+      })
+  
+      // copy imageA from imageFolder to workingFolder
+      fs.copyFileSync(path.join(workspaceFolder, 'images', 'image@_ custom.png'), path.join(folderPath, 'image@_ custom.png'));
+      await sleep();
+  
+      vscode.commands.executeCommand('image-import-generator.generateImportOnce', uri);
+      await sleep();
+      
+      assert.ok(fs.existsSync(indexFilePath));
+      const indexContent = fs.readFileSync(indexFilePath, 'utf-8');
+      const expectedContent = await getValidationFile('custom');
+      assert.equal(indexContent, expectedContent);
+    } catch (error) {
+      throw error
+    } finally {
+      await resetExtensionSettings();
+    }
+  });
 });
 
 // sleep function
@@ -262,4 +322,18 @@ async function getValidationFile(fileName: string) {
   const filePath = path.join(workspaceFolder, 'validation', fileName + '.index.ts');
   const fileContent = await fs.promises.readFile(filePath, 'utf-8');
   return fileContent;
+}
+
+async function resetExtensionSettings() {
+  const config = vscode.workspace.getConfiguration('image-import-generator');
+  const scope = [vscode.ConfigurationTarget.Global, vscode.ConfigurationTarget.Workspace];
+  scope.forEach(target => {
+    config.update('fileNamePrefix', undefined, target);
+    config.update('fileNameSuffix', undefined, target);
+    config.update('spaceReplacement', undefined, target);
+    config.update('hyphenReplacement', undefined, target);
+    config.update('atReplacement', undefined, target);
+  })
+
+  await sleep();
 }

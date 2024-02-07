@@ -53,7 +53,44 @@
         "id": "image-import-generator.submenu",
         "label": "Image Import Generator"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Image Import Generator",
+      "properties": {
+        "image-import-generator.fileNamePrefix": {
+          "type": "string",
+          "description": "Image file name prefix",
+          "default": "",
+          "order": 1
+        },
+        "image-import-generator.fileNameSuffix": {
+          "type": "string",
+          "description": "Image file name suffix",
+          "default": "",
+          "order": 2
+        },
+        "image-import-generator.spaceReplacement": {
+          "type": "string",
+          "description": "Character to replace space in file name",
+          "default": "_",
+          "order": 3
+
+        },
+        "image-import-generator.hyphenReplacement": {
+          "type": "string",
+          "description": "Character to replace '-' in file name",
+          "default": "_",
+          "order": 4
+        },
+        "image-import-generator.atReplacement": {
+          "type": "string",
+          "description": "Character to replace '@' in file name",
+          "default": "",
+          "order": 5
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

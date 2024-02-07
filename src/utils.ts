@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { ExtensionConfig, IImage } from './model';
 
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-export interface IImage {
-  name: string;
-  path: string;
-}
 
-export function getImagesInDir(dir: string) {
+
+export function getImagesInDir(dir: string, config: ExtensionConfig) {
+  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
+
   let images: IImage[] = [];
 
   function isImageFile(filename: string) {
@@ -26,7 +26,7 @@ export function getImagesInDir(dir: string) {
         scanDirectory(filePath);
       } else if (isImageFile(file)) {
         images.push({
-          name: parseNameWithSpace(file),
+          name: parseNameWithSpace(file, spaceReplacement),
           path: parsePathWithSpaces(filePath),
         });
       }
@@ -55,28 +55,30 @@ export function generateFile(filePath: string, content: string) {
   });
 }
 
-export function parseImageImportsToString(images: IImage[], imageDir: string): string {
+export function parseImageImportsToString(images: IImage[], imageDir: string, config: ExtensionConfig): string {
+  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
   return images.reduce((prev, cur) => {
-    return prev + `\t${parseKey(cur.name)}: require('${getRelativePath(imageDir, cur.path)}'),\n`;
+    return prev + `\t${prefix}${parseKey(cur.name, config)}${suffix}: require('${getRelativePath(imageDir, cur.path)}'),\n`;
   }, '');
 }
 
 const extensionPattern = new RegExp(`(${imageExtensions.join('|')})`, 'gi');
 
-function parseKey(key: string): string {
-  return key.replace(/-/g, '_').replace(/@/g, '').replace(extensionPattern, '');
+function parseKey(key: string, config: ExtensionConfig): string {
+  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
+  return key.replace(/-/g, hyphenReplacement).replace(/@/g, atReplacement).replace(extensionPattern, '');
 }
 
 function getRelativePath(from: string, to: string) {
   return path.join('..', path.relative(from, to)).slice(1);
 }
 
-export function createImportIndex(imageDir: string) {
-  const images = getImagesInDir(imageDir);
+export function createImportIndex(imageDir: string, config: ExtensionConfig) {
+  const images = getImagesInDir(imageDir, config);
   if (images.length === 0) {
     generateFile(imageDir, '')
   }
-  const content = parseImageImportsToString(images, imageDir);
+  const content = parseImageImportsToString(images, imageDir, config);
   generateFile(imageDir, content);
 }
 

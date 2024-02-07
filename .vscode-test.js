@@ -5,6 +5,6 @@ module.exports = defineConfig({
   workspaceFolder: 'src/vscode-tests/resources',
   mocha: {
     ui: 'tdd',
-    timeout: 10000,
+    timeout: 30000,
   },
 });
