@@ -1,18 +1,22 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { ExtensionConfig, IImage } from './model';
-
-const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
-
+import * as fs from "fs";
+import * as path from "path";
+import { ExtensionConfig, IImage } from "./model";
 
 export function getImagesInDir(dir: string, config: ExtensionConfig) {
-  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
+  const {
+    prefix,
+    suffix,
+    spaceReplacement,
+    atReplacement,
+    hyphenReplacement,
+    imageExtensions,
+  } = config;
 
   let images: IImage[] = [];
 
   function isImageFile(filename: string) {
     const extension = path.extname(filename).toLowerCase();
-    return imageExtensions.includes(extension);
+    return imageExtensions.includes(extension.slice(1));
   }
 
   function scanDirectory(dir: string) {
@@ -47,45 +51,69 @@ export function getImagesInDir(dir: string, config: ExtensionConfig) {
 }
 
 export function generateFile(filePath: string, content: string) {
-  const fileContent = 'export default {\n' + content + '};';
-  fs.writeFile(filePath + '/index.ts', fileContent, (err) => {
+  const fileContent = "export default {\n" + content + "};";
+  fs.writeFile(path.join(filePath, "index.ts"), fileContent, (err) => {
     if (err) {
       throw new Error(err.message);
     }
   });
 }
 
-export function parseImageImportsToString(images: IImage[], imageDir: string, config: ExtensionConfig): string {
-  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
+export function parseImageImportsToString(
+  images: IImage[],
+  imageDir: string,
+  config: ExtensionConfig
+): string {
+  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } =
+    config;
   return images.reduce((prev, cur) => {
-    return prev + `\t${prefix}${parseKey(cur.name, config)}${suffix}: require('${getRelativePath(imageDir, cur.path)}'),\n`;
-  }, '');
+    return (
+      prev +
+      `\t${prefix}${parseKey(
+        cur.name,
+        config
+      )}${suffix}: require('${getRelativePath(imageDir, cur.path)}'),\n`
+    );
+  }, "");
 }
 
-const extensionPattern = new RegExp(`(${imageExtensions.join('|')})`, 'gi');
-
 function parseKey(key: string, config: ExtensionConfig): string {
-  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } = config;
-  return key.replace(/-/g, hyphenReplacement).replace(/@/g, atReplacement).replace(extensionPattern, '');
+  const {
+    prefix,
+    suffix,
+    spaceReplacement,
+    atReplacement,
+    hyphenReplacement,
+    imageExtensions,
+  } = config;
+  const extensionPattern = new RegExp(`.(${imageExtensions.join("|")})`, "gi");
+  return key
+    .replace(/-/g, hyphenReplacement)
+    .replace(/@/g, atReplacement)
+    .replace(extensionPattern, "");
 }
 
 function getRelativePath(from: string, to: string) {
-  return path.join('..', path.relative(from, to)).slice(1);
+  return path
+    .join("..", path.relative(from, to))
+    .slice(1)
+    .split(path.sep)
+    .join(path.posix.sep);
 }
 
 export function createImportIndex(imageDir: string, config: ExtensionConfig) {
   const images = getImagesInDir(imageDir, config);
   if (images.length === 0) {
-    generateFile(imageDir, '')
+    generateFile(imageDir, "");
   }
   const content = parseImageImportsToString(images, imageDir, config);
   generateFile(imageDir, content);
 }
 
 function parsePathWithSpaces(path: string): string {
-  return path.replace(/ /g, '\\ ');
+  return path.replace(/ /g, "\\ ");
 }
 
-function parseNameWithSpace(name: string, replacement = '_'): string {
+function parseNameWithSpace(name: string, replacement = "_"): string {
   return name.replace(/ /g, replacement);
 }

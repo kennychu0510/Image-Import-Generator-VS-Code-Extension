@@ -58,6 +58,21 @@
       "type": "object",
       "title": "Image Import Generator",
       "properties": {
+        "image-import-generator.imageExtensions": {
+          "type": "array",
+          "description": "Image extensions",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "webp"
+          ],
+          "order": 0
+        },
         "image-import-generator.fileNamePrefix": {
           "type": "string",
           "description": "Image file name prefix",
@@ -75,7 +90,6 @@
           "description": "Character to replace space in file name",
           "default": "_",
           "order": 3
-
         },
         "image-import-generator.hyphenReplacement": {
           "type": "string",
