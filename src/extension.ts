@@ -118,7 +118,6 @@ function getExtensionConfig(): ExtensionConfig {
   return {
     prefix: config.get("fileNamePrefix") || "",
     suffix: config.get("fileNameSuffix") || "",
-    spaceReplacement: config.get("spaceReplacement") || "",
     atReplacement: config.get("atReplacement") || "",
     hyphenReplacement: config.get("hyphenReplacement") || "",
     imageExtensions: config.get("imageExtensions") || [

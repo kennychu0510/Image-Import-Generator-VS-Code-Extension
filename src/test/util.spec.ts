@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import * as path from "path";
 import { ExtensionConfig, IImage } from "../model";
-import { getImagesInDir, parseImageImportsToString } from "../utils";
+import {
+  containSpace,
+  getImagesInDir,
+  parseImageImportsToString,
+} from "../utils";
 
 // get current file path
 
@@ -10,7 +14,6 @@ const imagesPath1 = path.join(__dirname, "assets", "images1");
 const config: ExtensionConfig = {
   prefix: "",
   suffix: "",
-  spaceReplacement: "_",
   atReplacement: "",
   hyphenReplacement: "_",
   imageExtensions: ["jpg", "jpeg", "png", "gif"],
@@ -68,7 +71,7 @@ describe("image paths parse to string", () => {
   });
 });
 
-describe("parse path with spaces", () => {
+describe("ignore images containing sapce", () => {
   it("should be able to parse path with spaces", () => {
     const folderWithImagesWithSpaces = path.join(
       __dirname,
@@ -76,9 +79,20 @@ describe("parse path with spaces", () => {
       "with-images-spaces"
     );
     const images = getImagesInDir(folderWithImagesWithSpaces, config);
-    expect(images.length === 3);
-    expect(images[0].name).toBe("image_A.png");
-    expect(images[1].name).toBe("image_B.png");
-    expect(images[2].name).toBe("image_C.gif");
+    expect(images.length === 0);
+  });
+});
+
+describe("contain spaces", () => {
+  it("should return true if name contains spaces", () => {
+    expect(containSpace("icon cancel.png")).toBeTruthy();
+  });
+
+  it("should return false if name does not contain spaces", () => {
+    expect(containSpace("icon-cancel.png")).toBeFalsy();
+  });
+
+  it("should return false if name does not contain spaces", () => {
+    expect(containSpace("icon/   cancel.png")).toBeTruthy();
   });
 });

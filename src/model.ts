@@ -1,7 +1,6 @@
 export type ExtensionConfig = {
   prefix: string;
   suffix: string;
-  spaceReplacement: string;
   atReplacement: string;
   hyphenReplacement: string;
   imageExtensions: string[];

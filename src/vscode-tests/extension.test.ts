@@ -353,11 +353,11 @@ suite("Image Import Generator", () => {
 
   test("Custom Settings - Scenario 1: Can read settings properly", async () => {
     await resetExtensionSettings();
+    await sleep(500);
 
     const config = vscode.workspace.getConfiguration("image-import-generator");
     assert.equal(config.get("fileNamePrefix"), "");
     assert.equal(config.get("fileNameSuffix"), "");
-    assert.equal(config.get("spaceReplacement"), "_");
     assert.equal(config.get("hyphenReplacement"), "_");
     assert.equal(config.get("atReplacement"), "");
   });
@@ -365,7 +365,7 @@ suite("Image Import Generator", () => {
   test("Custom Settings - Scenario 2: Use custom settings correctly", async () => {
     try {
       await resetExtensionSettings();
-
+      await sleep(500);
       const config = vscode.workspace.getConfiguration(
         "image-import-generator"
       );
@@ -377,11 +377,6 @@ suite("Image Import Generator", () => {
       config.update(
         "fileNameSuffix",
         "_suffix",
-        vscode.ConfigurationTarget.Workspace
-      );
-      config.update(
-        "spaceReplacement",
-        "_space_",
         vscode.ConfigurationTarget.Workspace
       );
       config.update(
@@ -407,12 +402,6 @@ suite("Image Import Generator", () => {
           .getConfiguration("image-import-generator")
           .get("fileNameSuffix"),
         "_suffix"
-      );
-      assert.equal(
-        vscode.workspace
-          .getConfiguration("image-import-generator")
-          .get("spaceReplacement"),
-        "_space_"
       );
       assert.equal(
         vscode.workspace
@@ -494,7 +483,6 @@ async function resetExtensionSettings() {
   scope.forEach((target) => {
     config.update("fileNamePrefix", undefined, target);
     config.update("fileNameSuffix", undefined, target);
-    config.update("spaceReplacement", undefined, target);
     config.update("hyphenReplacement", undefined, target);
     config.update("atReplacement", undefined, target);
   });

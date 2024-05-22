@@ -7,7 +7,7 @@
     "url": "https://github.com/kennychu0510/Image-Import-Generator-VS-Code-Extension"
   },
   "icon": "images/icon.png",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.82.0"
   },
@@ -85,23 +85,17 @@
           "default": "",
           "order": 2
         },
-        "image-import-generator.spaceReplacement": {
-          "type": "string",
-          "description": "Character to replace space in file name",
-          "default": "_",
-          "order": 3
-        },
         "image-import-generator.hyphenReplacement": {
           "type": "string",
           "description": "Character to replace '-' in file name",
           "default": "_",
-          "order": 4
+          "order": 3
         },
         "image-import-generator.atReplacement": {
           "type": "string",
           "description": "Character to replace '@' in file name",
           "default": "",
-          "order": 5
+          "order": 4
         }
       }
     }

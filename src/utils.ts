@@ -3,14 +3,8 @@ import * as path from "path";
 import { ExtensionConfig, IImage } from "./model";
 
 export function getImagesInDir(dir: string, config: ExtensionConfig) {
-  const {
-    prefix,
-    suffix,
-    spaceReplacement,
-    atReplacement,
-    hyphenReplacement,
-    imageExtensions,
-  } = config;
+  const { prefix, suffix, atReplacement, hyphenReplacement, imageExtensions } =
+    config;
 
   let images: IImage[] = [];
 
@@ -28,10 +22,10 @@ export function getImagesInDir(dir: string, config: ExtensionConfig) {
 
       if (stat.isDirectory()) {
         scanDirectory(filePath);
-      } else if (isImageFile(file)) {
+      } else if (isImageFile(file) && !containSpace(file)) {
         images.push({
-          name: parseNameWithSpace(file, spaceReplacement),
-          path: parsePathWithSpaces(filePath),
+          name: file,
+          path: filePath,
         });
       }
     });
@@ -64,8 +58,7 @@ export function parseImageImportsToString(
   imageDir: string,
   config: ExtensionConfig
 ): string {
-  const { prefix, suffix, spaceReplacement, atReplacement, hyphenReplacement } =
-    config;
+  const { prefix, suffix, atReplacement, hyphenReplacement } = config;
   return images.reduce((prev, cur) => {
     return (
       prev +
@@ -78,14 +71,8 @@ export function parseImageImportsToString(
 }
 
 function parseKey(key: string, config: ExtensionConfig): string {
-  const {
-    prefix,
-    suffix,
-    spaceReplacement,
-    atReplacement,
-    hyphenReplacement,
-    imageExtensions,
-  } = config;
+  const { prefix, suffix, atReplacement, hyphenReplacement, imageExtensions } =
+    config;
   const extensionPattern = new RegExp(`.(${imageExtensions.join("|")})`, "gi");
   return key
     .replace(/-/g, hyphenReplacement)
@@ -110,10 +97,6 @@ export function createImportIndex(imageDir: string, config: ExtensionConfig) {
   generateFile(imageDir, content);
 }
 
-function parsePathWithSpaces(path: string): string {
-  return path.replace(/ /g, "\\ ");
-}
-
-function parseNameWithSpace(name: string, replacement = "_"): string {
-  return name.replace(/ /g, replacement);
+export function containSpace(name: string): boolean {
+  return /\s/.test(name);
 }
